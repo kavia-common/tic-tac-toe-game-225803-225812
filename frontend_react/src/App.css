@@ -1,104 +1,283 @@
-/* CSS Variables for Theme Management */
+/* CSS Variables for Theme Management (Light theme accents) */
 :root {
-  /* Light theme colors */
+  /* Light theme base */
   --bg-primary: #ffffff;
-  --bg-secondary: #f8f9fa;
-  --text-primary: #282c34;
-  --text-secondary: #61dafb;
-  --border-color: #e9ecef;
-  --button-bg: #007bff;
+  --bg-secondary: #f8fafc;
+  --text-primary: #111827; /* neutral dark per light theme */
+  --text-secondary: #64748b;
+
+  /* Brand accents from style guide */
+  --color-primary: #3b82f6; /* primary */
+  --color-accent: #06b6d4;  /* accent */
+
+  /* Controls and borders */
+  --border-color: #e5e7eb;
+  --focus-ring: 2px solid rgba(59, 130, 246, 0.75); /* primary with alpha */
+  --tile-bg: #ffffff;
+  --tile-hover: #eff6ff; /* light primary tint */
+  --tile-active: #dbeafe; /* stronger primary tint */
+  --tile-disabled: #f3f4f6;
+
+  /* Buttons */
+  --button-bg: var(--color-primary);
+  --button-bg-hover: #2563eb; /* slightly darker primary */
+  --button-bg-active: #1d4ed8;
   --button-text: #ffffff;
+
+  /* Shadows */
+  --elev-1: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --elev-2: 0 4px 6px rgba(0, 0, 0, 0.08);
 }
 
 [data-theme="dark"] {
-  /* Dark theme colors */
-  --bg-primary: #1a1a1a;
-  --bg-secondary: #282c34;
-  --text-primary: #ffffff;
-  --text-secondary: #61dafb;
-  --border-color: #404040;
-  --button-bg: #0056b3;
+  /* Optional dark override so toggle remains functional */
+  --bg-primary: #0b1220;
+  --bg-secondary: #0f172a;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+
+  --border-color: #334155;
+  --tile-bg: #0f172a;
+  --tile-hover: rgba(59, 130, 246, 0.12);
+  --tile-active: rgba(59, 130, 246, 0.2);
+  --tile-disabled: #111827;
+
+  --button-bg: var(--color-primary);
+  --button-bg-hover: #3b82f6;
+  --button-bg-active: #2563eb;
   --button-text: #ffffff;
 }
 
+/* App frame */
 .App {
-  text-align: center;
+  min-height: 100vh;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  min-height: 100vh;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 200ms ease, color 200ms ease;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
+/* Centered container */
 .App-header {
-  background-color: var(--bg-secondary);
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: var(--text-primary);
-  transition: background-color 0.3s ease;
+  background: radial-gradient(1200px 600px at 50% -10%, rgba(59,130,246,0.07), transparent 60%),
+              radial-gradient(900px 400px at 80% 10%, rgba(6,182,212,0.06), transparent 60%),
+              var(--bg-secondary);
+  display: grid;
+  place-items: center;
+  padding: 32px 16px;
+  transition: background-color 200ms ease, background 200ms ease;
   position: relative;
 }
 
-.App-link {
-  color: var(--text-secondary);
-  transition: color 0.3s ease;
+/* Layout stack for game */
+.tictactoe {
+  width: min(92vw, 520px);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 16px;
+  align-items: center;
 }
 
-.theme-toggle {
-  position: absolute;
-  top: 20px;
-  right: 20px;
+/* Title / Branding */
+.game-title {
+  margin: 0;
+  font-size: clamp(20px, 2.2vw + 16px, 28px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+/* Grid wrapper to enforce square area and responsiveness */
+.board {
+  width: 100%;
+  aspect-ratio: 1 / 1; /* enforce square */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  background: linear-gradient(180deg, rgba(59,130,246,0.06), rgba(6,182,212,0.06));
+  padding: 12px;
+  border-radius: 16px;
+  box-shadow: var(--elev-1);
+  border: 1px solid var(--border-color);
+}
+
+/* Individual tiles (buttons preferred for accessibility) */
+.tile {
+  display: grid;
+  place-items: center;
+  font-size: clamp(28px, 7vw, 42px);
+  font-weight: 800;
+  line-height: 1;
+  background-color: var(--tile-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: var(--elev-1);
+  cursor: pointer;
+  transition: transform 120ms ease, background-color 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Ensure square shape for environments lacking aspect-ratio support */
+@supports not (aspect-ratio: 1 / 1) {
+  .tile {
+    height: 0;
+    padding-bottom: 100%;
+    position: relative;
+  }
+  .tile > span,
+  .tile > strong {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+  }
+}
+
+.tile:hover:not(:disabled) {
+  background-color: var(--tile-hover);
+  transform: translateY(-1.5px);
+  box-shadow: var(--elev-2);
+  border-color: rgba(59,130,246,0.4);
+}
+
+.tile:active:not(:disabled) {
+  background-color: var(--tile-active);
+  transform: translateY(0);
+  box-shadow: var(--elev-1);
+}
+
+.tile:disabled {
+  cursor: not-allowed;
+  background-color: var(--tile-disabled);
+  opacity: 0.9;
+}
+
+/* Visible focus outlines for accessibility */
+.tile:focus-visible,
+.theme-toggle:focus-visible,
+.btn-reset:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Status bar with aria-live compatibility */
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: var(--elev-1);
+}
+
+.status-text {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.status-text strong {
+  color: var(--color-accent);
+}
+
+/* Reset button styled with accents */
+.btn-reset {
+  appearance: none;
+  border: 1px solid transparent;
   background-color: var(--button-bg);
   color: var(--button-text);
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
+  font-weight: 700;
   font-size: 14px;
-  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 10px 14px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--elev-1);
+  transition: background-color 120ms ease, transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+}
+
+.btn-reset:hover {
+  background-color: var(--button-bg-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--elev-2);
+}
+
+.btn-reset:active {
+  background-color: var(--button-bg-active);
+  transform: translateY(0);
+  box-shadow: var(--elev-1);
+}
+
+.btn-reset:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Theme toggle retained from base, refined to brand accents */
+.theme-toggle {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 160ms ease;
+  box-shadow: var(--elev-1);
 }
 
 .theme-toggle:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  opacity: 0.9;
+  border-color: rgba(6, 182, 212, 0.6);
+  box-shadow: var(--elev-2);
+  transform: translateY(-1px);
 }
 
 .theme-toggle:active {
   transform: translateY(0);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+/* Links in template retained */
+.App-link {
+  color: var(--color-primary);
+  transition: color 0.2s ease;
+}
+
+/* Reduce motion support */
+@media (prefers-reduced-motion: reduce) {
+  .tile,
+  .btn-reset,
+  .theme-toggle {
+    transition: none;
   }
 }
 
-/* Responsive design for mobile */
-@media (max-width: 768px) {
-  .theme-toggle {
-    top: 10px;
-    right: 10px;
-    padding: 8px 16px;
-    font-size: 12px;
+/* Mobile tweaks */
+@media (max-width: 480px) {
+  .board {
+    gap: 8px;
+    padding: 10px;
+    border-radius: 14px;
   }
+  .tile {
+    border-radius: 10px;
+  }
+  .status-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* Optional: subtle keyframe used in original CRA logo (kept but unused) */
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
