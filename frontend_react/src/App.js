@@ -2,7 +2,13 @@ import React, { useEffect, useMemo, useState } from 'react';
 import './App.css';
 
 /**
+ * PUBLIC_INTERFACE
  * Calculates the winner of a Tic Tac Toe board.
+ *
+ * Algorithm:
+ * - Check all 8 winning line combinations (3 rows, 3 columns, 2 diagonals).
+ * - Return the symbol ("X" or "O") if any line has identical non-null values.
+ *
  * @param {Array<string|null>} board - An array of 9 cells ("X", "O" or null)
  * @returns {"X"|"O"|null} The winner symbol if any, otherwise null.
  */
@@ -58,18 +64,25 @@ function App() {
   const draw = useMemo(() => isDraw(board), [board]);
   const gameOver = Boolean(winner) || draw;
 
-  // PUBLIC_INTERFACE
+  /**
+   * PUBLIC_INTERFACE
+   * Toggles the application theme between "light" and "dark".
+   * Updates the root [data-theme] attribute to switch CSS variables.
+   */
   const toggleTheme = () => {
     setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'));
   };
 
   /**
+   * PUBLIC_INTERFACE
    * Handle a move at the provided index.
-   * - Ignore if cell occupied or game over.
-   * - Place current player's symbol.
-   * - Toggle current player.
+   * Behavior:
+   * - Ignore if the cell is already occupied or the game is over.
+   * - Place the current player's symbol in the chosen cell.
+   * - Toggle turn to the other player.
+   *
+   * @param {number} index - Board index (0..8) for the move.
    */
-  // PUBLIC_INTERFACE
   const handleSquareClick = (index) => {
     if (board[index] !== null || gameOver) return;
 
@@ -83,6 +96,12 @@ function App() {
   };
 
   // PUBLIC_INTERFACE
+  /**
+   * PUBLIC_INTERFACE
+   * Resets the game to its initial state:
+   * - Clears the board
+   * - Sets current player back to "X"
+   */
   const resetGame = () => {
     setBoard(Array(9).fill(null));
     setCurrentPlayer('X');
