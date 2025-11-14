@@ -138,14 +138,15 @@ function App() {
           </section>
 
           <section className="status-bar">
-            <p className="status-text" aria-live="polite" aria-atomic="true">
-              {winner && <span>Game over. Winner: <strong>{winner}</strong></span>}
-              {!winner && draw && <span>Game over. <strong>Draw</strong></span>}
-              {!gameOver && (
-                <span>
-                  Turn: <strong>{currentPlayer}</strong>
-                </span>
-              )}
+            <p
+              className="status-text"
+              aria-live="polite"
+              aria-atomic="true"
+              role="status"
+            >
+              {winner && <span>Game over. Winner: {winner}</span>}
+              {!winner && draw && <span>Game over. Draw</span>}
+              {!gameOver && <span>Turn: {currentPlayer}</span>}
             </p>
             <button
               type="button"
